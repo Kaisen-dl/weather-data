@@ -10,22 +10,30 @@ import (
 
 type GinHandler struct {
 	geocodingClient *api.Client
+	omClient        *api.OMClient
 }
 
-func NewGinHandler(geocodingClient *api.Client) *GinHandler {
+func NewGinHandler(geocodingClient *api.Client, omClient *api.OMClient) *GinHandler {
 	return &GinHandler{
 		geocodingClient: geocodingClient,
+		omClient:        omClient,
 	}
 }
 
 func (g *GinHandler) CityHandler(c *gin.Context) {
 	city := c.Param("city")
 	log.Println(city)
-	resp, err := g.geocodingClient.GetCoordinates(city)
+	GeoResp, err := g.geocodingClient.GetCoordinates(city)
 	if err != nil {
 		log.Println("err:", err)
 		return
 	}
 
-	c.JSON(http.StatusOK, resp)
+	omRes, err := g.omClient.GetTemperature(GeoResp.Latitude, GeoResp.Longitude)
+	if err != nil {
+		log.Println("err:", err)
+		return
+	}
+
+	c.JSON(http.StatusOK, omRes)
 }

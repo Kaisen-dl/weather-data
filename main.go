@@ -26,10 +26,11 @@ func main() {
 		Timeout: time.Second * 10,
 	}
 	geocodingClient := api.NewClient(httpClient)
+	openMeteoClient := api.NewOMClient(httpClient)
 
 	//----------------------- SERVER ------------------------------------------
 	router := gin.Default()
-	ginHandlers := server.NewGinHandler(geocodingClient)
+	ginHandlers := server.NewGinHandler(geocodingClient, openMeteoClient)
 	server.RegisterHandlers(router, ginHandlers)
 	wg.Add(1)
 	go func() {

@@ -35,6 +35,8 @@ func (c *Client) GetCoordinates(city string) (Responce, error) {
 		return Responce{}, err
 	}
 
+	defer r.Body.Close()
+
 	if r.StatusCode != http.StatusOK {
 		return Responce{}, fmt.Errorf("status code %d", r.StatusCode)
 	}
